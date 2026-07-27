@@ -1,0 +1,2049 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>無齒之輪｜11吋平板操作版</title>
+  <style>
+    :root {
+      --ink: #13253a;
+      --muted: #637184;
+      --paper: #f6f3ec;
+      --card: rgba(255, 255, 255, .88);
+      --line: #dbe1e7;
+      --navy: #153551;
+      --blue: #1ea7b8;
+      --blue-soft: #d8f1f2;
+      --coral: #f06f52;
+      --coral-soft: #fde1d9;
+      --gold: #e8b94c;
+      --ok: #13866f;
+      --ok-soft: #d9f2ea;
+      --bad: #c2413b;
+      --bad-soft: #f9dfdc;
+      --shadow: 0 18px 50px rgba(31, 49, 66, .1);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 88% 3%, rgba(240, 111, 82, .14), transparent 25rem),
+        radial-gradient(circle at 4% 35%, rgba(30, 167, 184, .12), transparent 25rem),
+        var(--paper);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    button, input { font: inherit; }
+
+    button {
+      color: inherit;
+      cursor: pointer;
+    }
+
+    button:focus-visible, input:focus-visible, summary:focus-visible {
+      outline: 3px solid rgba(30, 167, 184, .35);
+      outline-offset: 2px;
+    }
+
+    .shell {
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .masthead {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 0 4px 24px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px;
+      color: var(--coral);
+      font-size: .76rem;
+      font-weight: 850;
+      letter-spacing: .15em;
+    }
+
+    .eyebrow::before {
+      width: 24px;
+      height: 3px;
+      border-radius: 99px;
+      background: currentColor;
+      content: "";
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Noto Serif TC", "PMingLiU", serif;
+      font-size: clamp(2.25rem, 5vw, 4.9rem);
+      font-weight: 800;
+      letter-spacing: -.055em;
+      line-height: .95;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: clamp(.98rem, 1.6vw, 1.12rem);
+    }
+
+    .result-pill {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 10px;
+      min-width: 160px;
+      padding: 13px 17px;
+      border: 1px solid rgba(19, 134, 111, .25);
+      border-radius: 999px;
+      background: var(--ok-soft);
+      color: var(--ok);
+      font-size: .95rem;
+      font-weight: 850;
+      box-shadow: 0 10px 30px rgba(19, 134, 111, .08);
+    }
+
+    .result-pill.bad {
+      border-color: rgba(194, 65, 59, .2);
+      background: var(--bad-soft);
+      color: var(--bad);
+    }
+
+    .result-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 5px rgba(19, 134, 111, .1);
+    }
+
+    .result-pill.bad .result-dot { box-shadow: 0 0 0 5px rgba(194, 65, 59, .1); }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(290px, 380px) minmax(480px, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid rgba(19, 37, 58, .09);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .controls {
+      position: sticky;
+      top: 16px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      scrollbar-width: thin;
+    }
+
+    .panel-section {
+      padding: 21px 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-section:last-child { border-bottom: 0; }
+
+    .section-kicker {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 850;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .number-row {
+      display: grid;
+      grid-template-columns: 1fr 82px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .range-wrap { display: grid; gap: 7px; }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--navy);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 14px;
+      background: #edf0f2;
+    }
+
+    .segmented button {
+      min-height: 40px;
+      border: 0;
+      border-radius: 11px;
+      background: transparent;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 800;
+    }
+
+    .segmented button.active {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 3px 12px rgba(19, 37, 58, .1);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .toggle-copy strong {
+      display: block;
+      font-size: .92rem;
+    }
+
+    .toggle-copy small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: .76rem;
+    }
+
+    .switch {
+      position: relative;
+      flex: 0 0 auto;
+      width: 48px;
+      height: 28px;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .switch span {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: #cfd5da;
+      pointer-events: none;
+      transition: .2s ease;
+    }
+
+    .switch span::after {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, .2);
+      content: "";
+      transition: .2s ease;
+    }
+
+    .switch input:checked + span { background: var(--navy); }
+    .switch input:checked + span::after { transform: translateX(20px); }
+    .switch input:focus-visible + span { outline: 3px solid rgba(30, 167, 184, .35); }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .ghost-btn, .primary-btn, .icon-btn, .solution-chip {
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .ghost-btn:hover, .primary-btn:hover, .icon-btn:hover, .solution-chip:hover {
+      transform: translateY(-1px);
+    }
+
+    .ghost-btn {
+      min-height: 38px;
+      padding: 7px 10px;
+      border-radius: 11px;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    .ghost-btn:hover { border-color: var(--navy); color: var(--navy); }
+
+    .random-row {
+      display: grid;
+      grid-template-columns: 1fr 96px;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .random-count {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fff;
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 750;
+    }
+
+    .random-count input {
+      width: 38px;
+      height: 30px;
+      padding: 0;
+      border: 0;
+      border-radius: 6px;
+      font-size: .88rem;
+    }
+
+    .teeth-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .layer-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .86rem;
+      font-weight: 850;
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--blue);
+    }
+
+    .swatch.top { background: var(--coral); }
+
+    .count-label {
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 750;
+    }
+
+    .teeth-picker {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+      gap: 6px;
+      max-height: 150px;
+      overflow: auto;
+      padding: 2px;
+    }
+
+    .tooth-btn {
+      min-width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 800;
+    }
+
+    .tooth-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .tooth-btn.missing {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: #116e79;
+      box-shadow: inset 0 0 0 1px rgba(30, 167, 184, .1);
+    }
+
+    #topPicker .tooth-btn.missing {
+      border-color: var(--coral);
+      background: var(--coral-soft);
+      color: #a84732;
+    }
+
+    .layer-block + .layer-block {
+      margin-top: 17px;
+      padding-top: 17px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .primary-btn {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 14px;
+      border-color: var(--navy);
+      border-radius: 13px;
+      background: var(--navy);
+      color: #fff;
+      font-weight: 850;
+      box-shadow: 0 10px 24px rgba(21, 53, 81, .18);
+    }
+
+    .primary-btn:disabled, .ghost-btn:disabled {
+      cursor: not-allowed;
+      opacity: .48;
+      transform: none;
+    }
+
+    .stage-card { overflow: hidden; }
+
+    .stage-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 750;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-mark {
+      width: 11px;
+      height: 11px;
+      border-radius: 3px;
+      background: var(--blue);
+    }
+
+    .legend-mark.top { background: var(--coral); }
+    .legend-mark.overlap { background: #887c78; }
+    .legend-mark.conflict { border-radius: 50%; background: var(--bad); }
+
+    .view-actions { display: flex; gap: 7px; }
+
+    .mini-toggle {
+      min-height: 34px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 800;
+    }
+
+    .mini-toggle.active {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 580px;
+      padding: 24px;
+      background:
+        linear-gradient(rgba(19, 37, 58, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(19, 37, 58, .035) 1px, transparent 1px),
+        #fcfbf8;
+      background-size: 32px 32px;
+    }
+
+    canvas {
+      display: block;
+      width: min(640px, 100%);
+      height: auto;
+      max-height: none;
+      aspect-ratio: 1;
+      touch-action: none;
+    }
+
+    .canvas-result {
+      position: absolute;
+      top: 17px;
+      right: 19px;
+      z-index: 2;
+      min-width: 148px;
+      justify-content: center;
+      background: rgba(217, 242, 234, .94);
+      backdrop-filter: blur(10px);
+    }
+
+    .canvas-note {
+      position: absolute;
+      right: 19px;
+      bottom: 17px;
+      max-width: 220px;
+      padding: 10px 12px;
+      border: 1px solid rgba(19, 37, 58, .08);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, .9);
+      color: var(--muted);
+      font-size: .74rem;
+      box-shadow: 0 7px 24px rgba(19, 37, 58, .08);
+      backdrop-filter: blur(8px);
+    }
+
+    .transport {
+      display: grid;
+      grid-template-columns: auto auto auto minmax(130px, 1fr) auto;
+      gap: 9px;
+      align-items: center;
+      padding: 15px 18px;
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,.72);
+    }
+
+    .icon-btn {
+      width: 43px;
+      height: 43px;
+      border-radius: 12px;
+      color: var(--navy);
+      font-size: 1.02rem;
+      font-weight: 900;
+    }
+
+    .icon-btn.play {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .speed-block {
+      display: grid;
+      grid-template-columns: auto minmax(70px, 1fr);
+      gap: 9px;
+      align-items: center;
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 800;
+    }
+
+    .step-readout {
+      min-width: 124px;
+      text-align: right;
+    }
+
+    .step-readout strong {
+      display: block;
+      color: var(--ink);
+      font-size: .9rem;
+    }
+
+    .step-readout small { color: var(--muted); }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .result-card, .explore-card { padding: 22px; }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255,255,255,.7);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.2rem;
+    }
+
+    .coverage-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    .coverage-label span:last-child { color: var(--muted); }
+
+    .coverage-strip {
+      display: grid;
+      grid-template-columns: repeat(var(--n), minmax(5px, 1fr));
+      gap: 3px;
+      min-height: 34px;
+      margin-bottom: 18px;
+    }
+
+    .coverage-cell {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      border-radius: 6px;
+      background: var(--ok-soft);
+      color: var(--ok);
+      font-size: clamp(.48rem, .8vw, .68rem);
+      font-weight: 900;
+    }
+
+    .coverage-cell.bad {
+      background: var(--bad-soft);
+      color: var(--bad);
+    }
+
+    .solution-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .solution-head strong { font-size: .9rem; }
+    .solution-head span { color: var(--muted); font-size: .76rem; }
+
+    .solution-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      min-height: 36px;
+    }
+
+    .solution-chip {
+      min-width: 39px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 10px;
+      color: var(--ok);
+      font-size: .78rem;
+      font-weight: 850;
+    }
+
+    .solution-chip.current {
+      border-color: var(--ok);
+      background: var(--ok);
+      color: #fff;
+    }
+
+    .no-solutions {
+      margin: 0;
+      color: var(--bad);
+      font-size: .83rem;
+      font-weight: 750;
+    }
+
+    .explore-title {
+      margin: 0;
+      font-family: Georgia, "Noto Serif TC", serif;
+      font-size: 1.25rem;
+    }
+
+    .explore-copy {
+      margin: 7px 0 15px;
+      color: var(--muted);
+      font-size: .83rem;
+    }
+
+    .explore-options {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: .79rem;
+      font-weight: 750;
+    }
+
+    .plain-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .plain-check input { accent-color: var(--navy); }
+
+    .explore-output {
+      min-height: 64px;
+      margin-top: 13px;
+      padding: 12px 13px;
+      border-radius: 13px;
+      background: #f1f3f4;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .explore-output.good {
+      background: var(--ok-soft);
+      color: #0e6959;
+    }
+
+    .explore-output.bad {
+      background: var(--bad-soft);
+      color: #9a312d;
+    }
+
+    .counterexample-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 9px;
+      border: 1px solid currentColor;
+      border-radius: 8px;
+      background: transparent;
+      color: inherit;
+      font-size: .76rem;
+      font-weight: 850;
+    }
+
+    .notes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    details.card { padding: 0; overflow: hidden; }
+
+    summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 21px;
+      cursor: pointer;
+      font-weight: 850;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+    summary::after { color: var(--coral); content: "＋"; font-size: 1.2rem; }
+    details[open] summary::after { content: "－"; }
+
+    .detail-body {
+      padding: 0 21px 20px;
+      color: var(--muted);
+      font-size: .86rem;
+    }
+
+    .detail-body p { margin: 0 0 10px; }
+    .detail-body ol { margin: 0; padding-left: 1.3rem; }
+    .detail-body li + li { margin-top: 6px; }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 5px 0;
+      color: var(--muted);
+      font-size: .74rem;
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 9;
+      max-width: min(360px, calc(100vw - 44px));
+      padding: 12px 15px;
+      border-radius: 13px;
+      background: var(--navy);
+      color: #fff;
+      font-size: .82rem;
+      font-weight: 750;
+      box-shadow: 0 14px 40px rgba(21, 53, 81, .28);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: .22s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 980px) {
+      .workspace { grid-template-columns: 1fr; }
+      .controls { position: static; max-height: none; }
+      .analysis-grid, .notes { grid-template-columns: 1fr; }
+      .canvas-wrap { min-height: 500px; }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 20px, 1480px); padding-top: 18px; }
+      .masthead { align-items: flex-start; flex-direction: column; }
+      .result-pill { min-width: 0; }
+      .panel-section, .result-card, .explore-card { padding: 18px; }
+      .stage-topbar { align-items: flex-start; flex-direction: column; }
+      .canvas-wrap { min-height: 370px; padding: 10px; }
+      canvas { max-height: none; }
+      .canvas-note { display: none; }
+      .transport {
+        grid-template-columns: auto auto auto 1fr;
+      }
+      .speed-block { grid-column: 1 / -1; grid-row: 2; }
+      .step-readout { min-width: 0; }
+      .metric-row { grid-template-columns: 1fr 1fr; }
+      .metric:last-child { grid-column: 1 / -1; }
+      .footer { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    /* 11-inch tablet layout: 834×1194 / 1194×834 class devices */
+    @media (min-width: 760px) and (max-width: 1366px) {
+      .shell {
+        width: calc(100% - 20px);
+        padding: 12px 0 34px;
+      }
+
+      .masthead {
+        align-items: center;
+        padding: 0 2px 12px;
+      }
+
+      .eyebrow { margin-bottom: 4px; }
+
+      h1 {
+        font-size: clamp(2.35rem, 4.4vw, 3.45rem);
+        line-height: .98;
+      }
+
+      .subtitle {
+        max-width: 680px;
+        margin-top: 7px;
+        font-size: .9rem;
+      }
+
+      .workspace {
+        grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+
+      .workspace > section { min-width: 0; }
+
+      .controls {
+        position: sticky;
+        top: 8px;
+        max-height: calc(100dvh - 16px);
+        overflow: auto;
+        border-radius: 20px;
+        overscroll-behavior: contain;
+      }
+
+      .panel-section { padding: 14px 15px; }
+      .section-kicker { margin-bottom: 10px; }
+      .toggle-row { margin-top: 10px; }
+      .layer-block + .layer-block { margin-top: 12px; padding-top: 12px; }
+
+      .segmented button,
+      .ghost-btn {
+        min-height: 44px;
+      }
+
+      .primary-btn { min-height: 50px; }
+
+      .tooth-btn {
+        min-width: 40px;
+        height: 42px;
+        font-size: .82rem;
+      }
+
+      .teeth-picker {
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        max-height: 126px;
+        gap: 6px;
+      }
+
+      .stage-card { border-radius: 20px; }
+      .stage-topbar { padding: 12px 14px; }
+
+      .canvas-wrap {
+        min-height: 0;
+        padding: 10px;
+      }
+
+      canvas {
+        width: min(540px, 100%, calc(100dvh - 245px));
+      }
+
+      .canvas-result {
+        top: 12px;
+        right: 12px;
+      }
+
+      .transport {
+        gap: 8px;
+        padding: 11px 12px;
+      }
+
+      .icon-btn {
+        width: 48px;
+        height: 48px;
+      }
+
+      .analysis-grid {
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .result-card,
+      .explore-card {
+        padding: 16px;
+      }
+
+      .metric-row {
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .notes {
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      button,
+      input,
+      summary {
+        touch-action: manipulation;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">森棚教官數學題・11 吋平板操作版</p>
+        <h1>無齒之輪</h1>
+        <p class="subtitle">從齒輪正上方垂直向下觀察：改變齒數與缺齒位置，旋轉或翻轉上層齒輪，找出兩層投影能否補成一個完整齒輪。</p>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="card controls" aria-label="模擬設定">
+        <section class="panel-section">
+          <p class="section-kicker">01 / 齒輪設定</p>
+          <div class="number-row">
+            <div class="range-wrap">
+              <input id="teethRange" type="range" min="4" max="60" value="7" aria-label="齒數">
+              <div class="range-labels"><span>4 齒</span><span>60 齒</span></div>
+            </div>
+            <input id="teethNumber" type="number" min="4" max="60" value="7" aria-label="齒數數值">
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-copy">
+              <strong>同步上下層缺齒</strong>
+              <small>符合附件「砍去重合的齒」情境</small>
+            </div>
+            <label class="switch">
+              <input id="syncMissing" type="checkbox" checked aria-label="同步上下層缺齒">
+              <span></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-copy">
+              <strong>翻面上層齒輪</strong>
+              <small>缺齒次序會左右鏡射</small>
+            </div>
+            <label class="switch">
+              <input id="flipTop" type="checkbox" aria-label="翻面上層齒輪">
+              <span></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <p class="section-kicker">02 / 旋轉方式</p>
+          <div class="segmented" aria-label="旋轉方向">
+            <button id="clockwiseBtn" class="active" type="button" aria-pressed="true">↻ 順時針</button>
+            <button id="counterBtn" type="button" aria-pressed="false">↺ 逆時針</button>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-copy">
+              <strong>找到完整投影就暫停</strong>
+              <small>播放時自動停在第一個解</small>
+            </div>
+            <label class="switch">
+              <input id="stopOnComplete" type="checkbox" checked aria-label="找到完整投影就暫停">
+              <span></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <p class="section-kicker">03 / 快速範例</p>
+          <div class="preset-grid">
+            <button class="ghost-btn preset" type="button" data-preset="seven">7 齒・缺 3</button>
+            <button class="ghost-btn preset" type="button" data-preset="fourteen">14 齒・缺 4</button>
+            <button class="ghost-btn preset" type="button" data-preset="twentytwo">22 齒・缺 5</button>
+          </div>
+          <div class="random-row">
+            <button class="ghost-btn" id="randomizeBtn" type="button">隨機缺齒</button>
+            <label class="random-count">缺
+              <input id="randomCount" type="number" min="0" max="6" value="3" aria-label="隨機缺齒數">
+              齒
+            </label>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <p class="section-kicker">04 / 點選缺齒</p>
+          <div class="layer-block">
+            <div class="teeth-head">
+              <span class="layer-label"><span class="swatch"></span>下層齒輪</span>
+              <span class="count-label" id="bottomCountLabel">已缺 3 齒</span>
+            </div>
+            <div class="teeth-picker" id="bottomPicker" aria-label="選擇下層缺齒"></div>
+          </div>
+          <div class="layer-block" id="topLayerBlock" hidden>
+            <div class="teeth-head">
+              <span class="layer-label"><span class="swatch top"></span>上層齒輪</span>
+              <span class="count-label" id="topCountLabel">已缺 3 齒</span>
+            </div>
+            <div class="teeth-picker" id="topPicker" aria-label="選擇上層缺齒"></div>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <button class="primary-btn" id="findBtn" type="button">跳到下一個完整投影</button>
+          <button class="ghost-btn" id="resetBtn" type="button" style="width:100%;margin-top:8px">回到起點</button>
+        </section>
+      </aside>
+
+      <section>
+        <div class="card stage-card">
+          <div class="stage-topbar">
+            <div class="legend" aria-label="圖例">
+              <span class="legend-item"><span class="legend-mark"></span>下層</span>
+              <span class="legend-item"><span class="legend-mark top"></span>上層</span>
+              <span class="legend-item"><span class="legend-mark overlap"></span>齒面重疊</span>
+              <span class="legend-item"><span class="legend-mark conflict"></span>兩層都缺</span>
+            </div>
+            <div class="view-actions">
+              <button class="mini-toggle active" id="labelsBtn" type="button" aria-pressed="true">顯示編號</button>
+            </div>
+          </div>
+
+          <div class="canvas-wrap">
+            <div class="result-pill canvas-result" id="resultPill" role="status" aria-live="polite">
+              <span class="result-dot"></span>
+              <span id="resultPillText">投影完整</span>
+            </div>
+            <canvas id="gearCanvas" width="720" height="720" aria-label="從正上方垂直向下觀看的上下兩層缺齒齒輪疊合圖"></canvas>
+            <div class="canvas-note">藍色是下層、橘色是上層；兩層有齒的位置會混成較深的交疊色。</div>
+          </div>
+
+          <div class="transport">
+            <button class="icon-btn" id="backBtn" type="button" aria-label="反向旋轉一格">−1</button>
+            <button class="icon-btn play" id="playBtn" type="button" aria-label="開始播放">▶</button>
+            <button class="icon-btn" id="forwardBtn" type="button" aria-label="依設定方向旋轉一格">+1</button>
+            <label class="speed-block">速度
+              <input id="speedRange" type="range" min="180" max="1200" step="20" value="720" aria-label="播放速度">
+            </label>
+            <div class="step-readout">
+              <strong id="stepText">起點</strong>
+              <small id="angleText">0°</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="analysis-grid">
+          <section class="card result-card">
+            <div class="metric-row">
+              <div class="metric"><span>已覆蓋齒位</span><strong id="coverageMetric">4 / 7</strong></div>
+              <div class="metric"><span>衝突缺口</span><strong id="conflictMetric">3</strong></div>
+              <div class="metric"><span>完整位置數</span><strong id="solutionMetric">2</strong></div>
+            </div>
+
+            <div class="coverage-label">
+              <span>逐齒覆蓋檢查</span>
+              <span id="conflictText">缺口：1、3、5</span>
+            </div>
+            <div class="coverage-strip" id="coverageStrip" aria-label="逐齒覆蓋情況"></div>
+
+            <div class="solution-head">
+              <strong>從起點轉幾格會完整？</strong>
+              <span>數字依目前旋轉方向計算，可點擊查看</span>
+            </div>
+            <div class="solution-list" id="solutionList"></div>
+          </section>
+
+          <section class="card explore-card">
+            <h2 class="explore-title">「任意缺法」檢驗器</h2>
+            <p class="explore-copy">固定目前齒數與缺齒數，窮舉不同缺法，檢查是否每一種都找得到完整投影。</p>
+            <div class="explore-options">
+              <label class="plain-check"><input id="allowFlipSearch" type="checkbox"> 檢驗時也允許翻面</label>
+              <span id="combinationEstimate"></span>
+            </div>
+            <button class="primary-btn" id="verifyAllBtn" type="button">開始檢驗所有缺法</button>
+            <div class="explore-output" id="exploreOutput" aria-live="polite">準備好後按下檢驗。為避免重複，會固定第 1 齒為缺齒。</div>
+          </section>
+        </div>
+
+        <div class="notes">
+          <details class="card">
+            <summary>怎麼判斷「完整」？</summary>
+            <div class="detail-body">
+              <p>把圓周分成相同數量的齒位。若每一個位置至少有上層或下層的一枚齒，兩層投影就是完整齒輪。</p>
+              <p>紅色位置代表兩層同時缺齒，也是目前仍無法補上的缺口。旋轉上層，就是讓它的缺齒集合在圓周上平移；翻面則會先把次序鏡射。</p>
+            </div>
+          </details>
+
+          <details class="card">
+            <summary>附件中的四個挑戰</summary>
+            <div class="detail-body">
+              <ol>
+                <li>兩個 7 齒齒輪，任意砍去 3 對重合的齒。</li>
+                <li>兩個 14 齒齒輪，任意砍去 4 對重合的齒。</li>
+                <li>兩個 n 齒齒輪，砍去 5 對；找出「不管怎麼砍」都能補齊的 n。</li>
+                <li>若除了旋轉還能把齒輪翻面，答案會如何改變？</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <span>本頁依附件〈森棚教官的數學題〉題意製作，作為互動探索工具。</span>
+      <span>所有運算都在瀏覽器本機完成，可離線使用。</span>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => [...document.querySelectorAll(selector)];
+      const mod = (value, n) => ((value % n) + n) % n;
+      const sorted = (set) => [...set].sort((a, b) => a - b);
+
+      const els = {
+        canvas: $("#gearCanvas"),
+        teethRange: $("#teethRange"),
+        teethNumber: $("#teethNumber"),
+        syncMissing: $("#syncMissing"),
+        flipTop: $("#flipTop"),
+        stopOnComplete: $("#stopOnComplete"),
+        clockwiseBtn: $("#clockwiseBtn"),
+        counterBtn: $("#counterBtn"),
+        randomCount: $("#randomCount"),
+        randomizeBtn: $("#randomizeBtn"),
+        bottomPicker: $("#bottomPicker"),
+        topPicker: $("#topPicker"),
+        topLayerBlock: $("#topLayerBlock"),
+        bottomCountLabel: $("#bottomCountLabel"),
+        topCountLabel: $("#topCountLabel"),
+        findBtn: $("#findBtn"),
+        resetBtn: $("#resetBtn"),
+        backBtn: $("#backBtn"),
+        playBtn: $("#playBtn"),
+        forwardBtn: $("#forwardBtn"),
+        speedRange: $("#speedRange"),
+        labelsBtn: $("#labelsBtn"),
+        stepText: $("#stepText"),
+        angleText: $("#angleText"),
+        resultPill: $("#resultPill"),
+        resultPillText: $("#resultPillText"),
+        coverageMetric: $("#coverageMetric"),
+        conflictMetric: $("#conflictMetric"),
+        solutionMetric: $("#solutionMetric"),
+        conflictText: $("#conflictText"),
+        coverageStrip: $("#coverageStrip"),
+        solutionList: $("#solutionList"),
+        allowFlipSearch: $("#allowFlipSearch"),
+        combinationEstimate: $("#combinationEstimate"),
+        verifyAllBtn: $("#verifyAllBtn"),
+        exploreOutput: $("#exploreOutput"),
+        toast: $("#toast")
+      };
+
+      const state = {
+        n: 7,
+        bottomMissing: new Set([0, 2, 4]),
+        topMissing: new Set([0, 2, 4]),
+        sync: true,
+        flip: false,
+        direction: 1,
+        shift: 0,
+        visualShift: 0,
+        visualTarget: 0,
+        rotationFrame: null,
+        showLabels: true,
+        playing: false,
+        timer: null,
+        verifying: false,
+        verifyToken: 0
+      };
+
+      const presets = {
+        seven: { n: 7, missing: [0, 2, 4], count: 3 },
+        fourteen: { n: 14, missing: [0, 3, 7, 10], count: 4 },
+        twentytwo: { n: 22, missing: [0, 2, 6, 11, 17], count: 5 }
+      };
+
+      function topMissingAtShift(shift = state.shift, flipped = state.flip, source = state.topMissing) {
+        const result = new Set();
+        source.forEach((tooth) => {
+          result.add(flipped ? mod(shift - tooth, state.n) : mod(tooth + shift, state.n));
+        });
+        return result;
+      }
+
+      function conflictsAtShift(shift = state.shift, flipped = state.flip, bottom = state.bottomMissing, top = state.topMissing) {
+        const topWorld = new Set();
+        top.forEach((tooth) => topWorld.add(flipped ? mod(shift - tooth, state.n) : mod(tooth + shift, state.n)));
+        return sorted(new Set([...bottom].filter((tooth) => topWorld.has(tooth))));
+      }
+
+      function solutions(flipped = state.flip) {
+        const found = [];
+        for (let shift = 0; shift < state.n; shift += 1) {
+          if (conflictsAtShift(shift, flipped).length === 0) found.push(shift);
+        }
+        return found;
+      }
+
+      function displayStepsForShift(shift) {
+        return state.direction === 1 ? mod(shift, state.n) : mod(-shift, state.n);
+      }
+
+      function snapVisualShift() {
+        if (state.rotationFrame) window.cancelAnimationFrame(state.rotationFrame);
+        state.rotationFrame = null;
+        state.visualShift = state.shift;
+        state.visualTarget = state.shift;
+      }
+
+      function animateVisualTo(target, stepDistance = 1) {
+        if (state.rotationFrame) window.cancelAnimationFrame(state.rotationFrame);
+        state.rotationFrame = null;
+
+        const start = state.visualShift;
+        const distance = target - start;
+        state.visualTarget = target;
+        if (Math.abs(distance) < .0001 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          state.visualShift = target;
+          draw();
+          return;
+        }
+
+        const interval = 1380 - Number(els.speedRange.value);
+        const duration = state.playing
+          ? Math.max(140, Math.min(430, interval * .76))
+          : Math.max(320, Math.min(850, 330 + Math.abs(stepDistance) * 55));
+        const startedAt = performance.now();
+
+        const frame = (now) => {
+          const progress = Math.min(1, (now - startedAt) / duration);
+          const eased = progress < .5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+          state.visualShift = start + distance * eased;
+          draw();
+          if (progress < 1) {
+            state.rotationFrame = window.requestAnimationFrame(frame);
+          } else {
+            state.visualShift = target;
+            state.rotationFrame = null;
+            draw();
+          }
+        };
+        state.rotationFrame = window.requestAnimationFrame(frame);
+      }
+
+      function animateToShift(targetShift, directionHint = state.direction) {
+        const target = mod(targetShift, state.n);
+        const delta = directionHint === 1
+          ? mod(target - state.shift, state.n)
+          : -mod(state.shift - target, state.n);
+        state.shift = target;
+        const visualTarget = state.visualTarget + delta;
+        update();
+        animateVisualTo(visualTarget, Math.abs(delta));
+      }
+
+      function applyPreset(name) {
+        const preset = presets[name];
+        stopPlayback();
+        state.n = preset.n;
+        state.bottomMissing = new Set(preset.missing);
+        state.topMissing = new Set(preset.missing);
+        state.shift = 0;
+        snapVisualShift();
+        state.sync = true;
+        state.flip = false;
+        els.randomCount.value = preset.count;
+        els.syncMissing.checked = true;
+        els.flipTop.checked = false;
+        syncInputs();
+        renderPickers();
+        invalidateExplore("設定已更改，可重新檢驗所有缺法。");
+        update();
+      }
+
+      function syncInputs() {
+        els.teethRange.value = state.n;
+        els.teethNumber.value = state.n;
+        els.randomCount.max = Math.max(0, state.n - 1);
+        els.topLayerBlock.hidden = state.sync;
+        els.clockwiseBtn.classList.toggle("active", state.direction === 1);
+        els.counterBtn.classList.toggle("active", state.direction === -1);
+        els.clockwiseBtn.setAttribute("aria-pressed", String(state.direction === 1));
+        els.counterBtn.setAttribute("aria-pressed", String(state.direction === -1));
+      }
+
+      function setTeethCount(raw) {
+        const next = Math.max(4, Math.min(60, Number(raw) || 4));
+        if (next === state.n) return;
+        stopPlayback();
+        state.n = next;
+        state.shift = mod(state.shift, next);
+        snapVisualShift();
+        state.bottomMissing = new Set([...state.bottomMissing].filter((x) => x < next));
+        state.topMissing = new Set([...state.topMissing].filter((x) => x < next));
+        if (state.sync) state.topMissing = new Set(state.bottomMissing);
+        els.randomCount.value = Math.min(Number(els.randomCount.value) || 0, next - 1);
+        syncInputs();
+        renderPickers();
+        invalidateExplore("齒數已更改，可重新檢驗所有缺法。");
+        update();
+      }
+
+      function renderPickers() {
+        const makeButtons = (target, missing, layer) => {
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < state.n; i += 1) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = `tooth-btn${missing.has(i) ? " missing" : ""}`;
+            button.textContent = i + 1;
+            button.dataset.index = i;
+            button.dataset.layer = layer;
+            button.setAttribute("aria-pressed", String(missing.has(i)));
+            button.setAttribute("aria-label", `第 ${i + 1} 齒${missing.has(i) ? "，目前缺齒" : "，目前完整"}`);
+            fragment.appendChild(button);
+          }
+          target.replaceChildren(fragment);
+        };
+        makeButtons(els.bottomPicker, state.bottomMissing, "bottom");
+        makeButtons(els.topPicker, state.topMissing, "top");
+        els.bottomCountLabel.textContent = `已缺 ${state.bottomMissing.size} 齒`;
+        els.topCountLabel.textContent = `已缺 ${state.topMissing.size} 齒`;
+      }
+
+      function toggleMissing(layer, index) {
+        stopPlayback();
+        const set = layer === "bottom" ? state.bottomMissing : state.topMissing;
+        if (set.has(index)) set.delete(index);
+        else if (set.size < state.n) set.add(index);
+        if (state.sync || layer === "bottom" && state.sync) state.topMissing = new Set(state.bottomMissing);
+        state.shift = mod(state.shift, state.n);
+        snapVisualShift();
+        renderPickers();
+        invalidateExplore("缺齒位置已更改；「任意缺法」只看缺齒數，可隨時重新檢驗。");
+        update();
+      }
+
+      function randomizeMissing() {
+        stopPlayback();
+        const count = Math.max(0, Math.min(state.n - 1, Number(els.randomCount.value) || 0));
+        const pool = Array.from({ length: state.n }, (_, i) => i);
+        for (let i = pool.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        state.bottomMissing = new Set(pool.slice(0, count));
+        if (state.sync) {
+          state.topMissing = new Set(state.bottomMissing);
+        } else {
+          for (let i = pool.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+          }
+          state.topMissing = new Set(pool.slice(0, count));
+        }
+        state.shift = 0;
+        snapVisualShift();
+        renderPickers();
+        invalidateExplore("已換成新的隨機缺法。");
+        update();
+      }
+
+      function rotateOne(multiplier = 1) {
+        const delta = state.direction * multiplier;
+        state.shift = mod(state.shift + delta, state.n);
+        const visualTarget = state.visualTarget + delta;
+        update();
+        animateVisualTo(visualTarget, Math.abs(multiplier));
+        if (state.playing && els.stopOnComplete.checked && conflictsAtShift().length === 0) {
+          stopPlayback();
+          showToast("找到完整投影，已自動暫停。");
+        }
+      }
+
+      function startPlayback() {
+        if (state.playing) return;
+        state.playing = true;
+        els.playBtn.textContent = "❚❚";
+        els.playBtn.setAttribute("aria-label", "暫停播放");
+        const tick = () => rotateOne(1);
+        state.timer = window.setInterval(tick, 1380 - Number(els.speedRange.value));
+      }
+
+      function stopPlayback() {
+        if (state.timer) window.clearInterval(state.timer);
+        state.timer = null;
+        state.playing = false;
+        els.playBtn.textContent = "▶";
+        els.playBtn.setAttribute("aria-label", "開始播放");
+      }
+
+      function restartPlaybackIfNeeded() {
+        if (!state.playing) return;
+        stopPlayback();
+        startPlayback();
+      }
+
+      function jumpToNextSolution() {
+        const found = new Set(solutions());
+        if (!found.size) {
+          showToast("目前設定沒有任何可補完整的旋轉位置。");
+          return;
+        }
+        for (let step = 1; step <= state.n; step += 1) {
+          const candidate = mod(state.shift + state.direction * step, state.n);
+          if (found.has(candidate)) {
+            stopPlayback();
+            animateToShift(candidate, state.direction);
+            showToast(`已前往${state.direction === 1 ? "順時針" : "逆時針"} ${step} 格後的完整投影。`);
+            return;
+          }
+        }
+      }
+
+      function update() {
+        const conflicts = conflictsAtShift();
+        const found = solutions();
+        const complete = conflicts.length === 0;
+        const covered = state.n - conflicts.length;
+        const step = displayStepsForShift(state.shift);
+        const angle = Math.round(step * 3600 / state.n) / 10;
+
+        els.resultPill.classList.toggle("bad", !complete);
+        els.resultPillText.textContent = complete ? "投影完整" : `還有 ${conflicts.length} 個缺口`;
+        els.coverageMetric.textContent = `${covered} / ${state.n}`;
+        els.conflictMetric.textContent = conflicts.length;
+        els.solutionMetric.textContent = found.length;
+        els.conflictText.textContent = conflicts.length ? `缺口：${conflicts.map((x) => x + 1).join("、")}` : "沒有重疊缺口";
+        els.stepText.textContent = step === 0 ? "起點" : `${state.direction === 1 ? "順時針" : "逆時針"} ${step} 格`;
+        els.angleText.textContent = `${angle}°${state.flip ? "・已翻面" : ""}`;
+        els.findBtn.disabled = found.length === 0;
+
+        renderCoverage(conflicts);
+        renderSolutions(found);
+        draw();
+        updateCombinationEstimate();
+      }
+
+      function renderCoverage(conflicts) {
+        const conflictSet = new Set(conflicts);
+        const fragment = document.createDocumentFragment();
+        els.coverageStrip.style.setProperty("--n", state.n);
+        for (let i = 0; i < state.n; i += 1) {
+          const cell = document.createElement("span");
+          cell.className = `coverage-cell${conflictSet.has(i) ? " bad" : ""}`;
+          cell.textContent = state.n <= 30 ? i + 1 : "";
+          cell.title = `第 ${i + 1} 齒位：${conflictSet.has(i) ? "兩層都缺" : "已覆蓋"}`;
+          fragment.appendChild(cell);
+        }
+        els.coverageStrip.replaceChildren(fragment);
+      }
+
+      function renderSolutions(found) {
+        if (!found.length) {
+          const note = document.createElement("p");
+          note.className = "no-solutions";
+          note.textContent = "目前缺齒配置找不到完整投影。可換一種缺法或嘗試翻面。";
+          els.solutionList.replaceChildren(note);
+          return;
+        }
+        const ordered = [...found].sort((a, b) => displayStepsForShift(a) - displayStepsForShift(b));
+        const fragment = document.createDocumentFragment();
+        ordered.forEach((shift) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `solution-chip${shift === state.shift ? " current" : ""}`;
+          const steps = displayStepsForShift(shift);
+          button.textContent = steps;
+          button.title = `${state.direction === 1 ? "順時針" : "逆時針"} ${steps} 格`;
+          button.addEventListener("click", () => {
+            stopPlayback();
+            animateToShift(shift, state.direction);
+          });
+          fragment.appendChild(button);
+        });
+        els.solutionList.replaceChildren(fragment);
+      }
+
+      function setupCanvas() {
+        const rect = els.canvas.getBoundingClientRect();
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        const size = Math.max(320, Math.round(Math.min(rect.width || 640, 680)));
+        els.canvas.width = Math.round(size * ratio);
+        els.canvas.height = Math.round(size * ratio);
+        els.canvas.style.removeProperty("height");
+        const ctx = els.canvas.getContext("2d");
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        return { ctx, size };
+      }
+
+      function gearPath(ctx, cx, cy, rootR, outerR, n, missing) {
+        const step = Math.PI * 2 / n;
+        const shoulderHalf = n > 32 ? .34 : .32;
+        const tipHalf = n > 32 ? .22 : .19;
+        ctx.beginPath();
+        for (let i = 0; i < n; i += 1) {
+          const center = -Math.PI / 2 + i * step;
+          const start = center - step * .5;
+          const end = center + step * .5;
+          const shoulderStart = center - step * shoulderHalf;
+          const shoulderEnd = center + step * shoulderHalf;
+          const tipStart = center - step * tipHalf;
+          const tipEnd = center + step * tipHalf;
+
+          if (i === 0) {
+            ctx.moveTo(
+              cx + Math.cos(start) * rootR,
+              cy + Math.sin(start) * rootR
+            );
+          }
+
+          if (missing.has(i)) {
+            ctx.arc(cx, cy, rootR, start, end);
+            continue;
+          }
+
+          ctx.arc(cx, cy, rootR, start, shoulderStart);
+          ctx.lineTo(
+            cx + Math.cos(tipStart) * outerR,
+            cy + Math.sin(tipStart) * outerR
+          );
+          ctx.lineTo(
+            cx + Math.cos(tipEnd) * outerR,
+            cy + Math.sin(tipEnd) * outerR
+          );
+          ctx.lineTo(
+            cx + Math.cos(shoulderEnd) * rootR,
+            cy + Math.sin(shoulderEnd) * rootR
+          );
+          ctx.arc(cx, cy, rootR, shoulderEnd, end);
+        }
+        ctx.closePath();
+      }
+
+      function drawTopDownGear(ctx, cx, cy, rootR, outerR, missing, fill, stroke, options = {}) {
+        const {
+          alpha = 1,
+          raised = false,
+          blendMode = "source-over",
+          rotation = 0,
+          lineWidth = Math.max(6, outerR * .045)
+        } = options;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rotation);
+        gearPath(ctx, 0, 0, rootR, outerR, state.n, missing);
+        if (raised) {
+          ctx.shadowColor = "rgba(21, 53, 81, .22)";
+          ctx.shadowBlur = 13;
+          ctx.shadowOffsetY = 5;
+        }
+        ctx.globalAlpha = alpha;
+        ctx.globalCompositeOperation = blendMode;
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.shadowColor = "transparent";
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = lineWidth;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawTopFaceDetails(ctx, rootR, outerR, missing) {
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 255, 255, .34)";
+        ctx.lineWidth = Math.max(1, outerR * .007);
+        ctx.lineCap = "round";
+
+        [rootR * .53, rootR * .78].forEach((radius) => {
+          ctx.beginPath();
+          ctx.arc(0, 0, radius, 0, Math.PI * 2);
+          ctx.stroke();
+        });
+
+        if (state.n <= 44) {
+          const step = Math.PI * 2 / state.n;
+          for (let i = 0; i < state.n; i += 1) {
+            if (missing.has(i)) continue;
+            const angle = -Math.PI / 2 + i * step;
+            ctx.beginPath();
+            ctx.moveTo(
+              Math.cos(angle) * rootR * 1.01,
+              Math.sin(angle) * rootR * 1.01
+            );
+            ctx.lineTo(
+              Math.cos(angle) * outerR * .91,
+              Math.sin(angle) * outerR * .91
+            );
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      function topDownPoint(cx, cy, angle, radius) {
+        return {
+          x: cx + Math.cos(angle) * radius,
+          y: cy + Math.sin(angle) * radius
+        };
+      }
+
+      function draw() {
+        const { ctx, size } = setupCanvas();
+        const cx = size / 2;
+        const cy = size / 2;
+        const outerR = size * .355;
+        const rootR = outerR * (
+          state.n > 36 ? .92 :
+          state.n > 20 ? .88 :
+          state.n > 12 ? .82 : .74
+        );
+        const topDrawMissing = state.flip
+          ? new Set([...state.topMissing].map((tooth) => mod(-tooth, state.n)))
+          : state.topMissing;
+        const topRotation = state.visualShift * Math.PI * 2 / state.n;
+        const conflicts = conflictsAtShift();
+        const conflictSet = new Set(conflicts);
+        const bottomSurfaceY = cy;
+        const topSurfaceY = cy;
+
+        ctx.clearRect(0, 0, size, size);
+
+        drawTopDownGear(
+          ctx, cx, bottomSurfaceY, rootR, outerR,
+          state.bottomMissing, "#29b9c7", "#0d8391",
+          { alpha: .44, lineWidth: Math.max(10, outerR * .065) }
+        );
+
+        drawTopDownGear(
+          ctx, cx, topSurfaceY, rootR, outerR,
+          topDrawMissing, "#f47b5d", "#d65037",
+          {
+            alpha: .5,
+            blendMode: "multiply",
+            rotation: topRotation,
+            lineWidth: Math.max(12, outerR * .08)
+          }
+        );
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, topSurfaceY, rootR * .37, 0, Math.PI * 2);
+        ctx.fillStyle = "#241a18";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, topSurfaceY, rootR * .21, 0, Math.PI * 2);
+        ctx.fillStyle = "#fffdfa";
+        ctx.fill();
+        ctx.restore();
+
+        const zeroWorld = state.visualShift;
+        const zeroAngle = -Math.PI / 2 + zeroWorld * Math.PI * 2 / state.n;
+        const zeroPoint = topDownPoint(cx, topSurfaceY, zeroAngle, rootR * .67);
+        ctx.save();
+        ctx.fillStyle = "#f06f52";
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(zeroPoint.x, zeroPoint.y, Math.max(5, size * .009), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        const step = Math.PI * 2 / state.n;
+        conflicts.forEach((position) => {
+          const angle = -Math.PI / 2 + position * step;
+          const point = topDownPoint(cx, topSurfaceY, angle, outerR * 1.05);
+          ctx.save();
+          ctx.fillStyle = "#c2413b";
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, Math.max(7, size * .014), 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        if (state.showLabels && state.n <= 40) {
+          ctx.save();
+          ctx.font = `700 ${Math.max(9, Math.min(14, 190 / state.n + 7))}px "Microsoft JhengHei", sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          for (let i = 0; i < state.n; i += 1) {
+            const angle = -Math.PI / 2 + i * step;
+            const point = topDownPoint(cx, topSurfaceY, angle, outerR * 1.19);
+            ctx.fillStyle = conflictSet.has(i) ? "#c2413b" : "#637184";
+            ctx.fillText(String(i + 1), point.x, point.y);
+          }
+          ctx.restore();
+        }
+
+      }
+
+      function choose(n, k) {
+        if (k < 0 || k > n) return 0;
+        k = Math.min(k, n - k);
+        let result = 1;
+        for (let i = 1; i <= k; i += 1) {
+          result = result * (n - k + i) / i;
+          if (result > 1e9) return result;
+        }
+        return Math.round(result);
+      }
+
+      function currentMissingCount() {
+        return Math.max(0, Math.min(state.n - 1, Number(els.randomCount.value) || 0));
+      }
+
+      function updateCombinationEstimate() {
+        const k = currentMissingCount();
+        const estimate = k === 0 ? 1 : choose(state.n - 1, k - 1);
+        els.combinationEstimate.textContent = `約 ${estimate.toLocaleString("zh-Hant")} 種`;
+      }
+
+      function patternHasSolution(pattern, allowFlip) {
+        const set = new Set(pattern);
+        for (let shift = 0; shift < state.n; shift += 1) {
+          let clear = true;
+          for (const tooth of pattern) {
+            if (set.has(mod(tooth + shift, state.n))) {
+              clear = false;
+              break;
+            }
+          }
+          if (clear) return true;
+        }
+        if (!allowFlip) return false;
+        for (let shift = 0; shift < state.n; shift += 1) {
+          let clear = true;
+          for (const tooth of pattern) {
+            if (set.has(mod(shift - tooth, state.n))) {
+              clear = false;
+              break;
+            }
+          }
+          if (clear) return true;
+        }
+        return false;
+      }
+
+      function invalidateExplore(message) {
+        state.verifyToken += 1;
+        state.verifying = false;
+        els.verifyAllBtn.disabled = false;
+        els.verifyAllBtn.textContent = "開始檢驗所有缺法";
+        els.exploreOutput.className = "explore-output";
+        els.exploreOutput.textContent = message;
+      }
+
+      function verifyAllPatterns() {
+        if (state.verifying) return;
+        const k = currentMissingCount();
+        const total = k === 0 ? 1 : choose(state.n - 1, k - 1);
+        const cap = 80000;
+        if (total > cap) {
+          els.exploreOutput.className = "explore-output bad";
+          els.exploreOutput.textContent = `需要檢查約 ${total.toLocaleString("zh-Hant")} 種，超過本頁的 ${cap.toLocaleString("zh-Hant")} 種安全上限。請減少齒數或缺齒數。`;
+          return;
+        }
+
+        const allowFlip = els.allowFlipSearch.checked;
+        const token = ++state.verifyToken;
+        state.verifying = true;
+        els.verifyAllBtn.disabled = true;
+        els.verifyAllBtn.textContent = "檢驗中…";
+        els.exploreOutput.className = "explore-output";
+        els.exploreOutput.textContent = "正在逐一檢查缺齒配置…";
+
+        if (k === 0) {
+          finishVerification(true, null, 1, allowFlip, token);
+          return;
+        }
+
+        const need = k - 1;
+        const combo = Array.from({ length: need }, (_, i) => i + 1);
+        let checked = 0;
+        let counterexample = null;
+        let finished = false;
+
+        const advance = () => {
+          if (need === 0 || finished) {
+            finished = true;
+            return false;
+          }
+          let index = need - 1;
+          while (index >= 0 && combo[index] === state.n - need + index) index -= 1;
+          if (index < 0) {
+            finished = true;
+            return false;
+          }
+          combo[index] += 1;
+          for (let j = index + 1; j < need; j += 1) combo[j] = combo[j - 1] + 1;
+          return true;
+        };
+
+        const batch = () => {
+          if (token !== state.verifyToken) return;
+          const deadline = performance.now() + 18;
+          do {
+            const pattern = need === 0 ? [0] : [0, ...combo];
+            checked += 1;
+            if (!patternHasSolution(pattern, allowFlip)) {
+              counterexample = [...pattern];
+              finished = true;
+              break;
+            }
+            if (!advance()) break;
+          } while (performance.now() < deadline);
+
+          if (finished) {
+            finishVerification(!counterexample, counterexample, checked, allowFlip, token);
+          } else {
+            els.exploreOutput.textContent = `已檢查 ${checked.toLocaleString("zh-Hant")} / ${total.toLocaleString("zh-Hant")} 種…`;
+            window.setTimeout(batch, 0);
+          }
+        };
+        window.setTimeout(batch, 0);
+      }
+
+      function finishVerification(allGood, counterexample, checked, allowFlip, token) {
+        if (token !== state.verifyToken) return;
+        state.verifying = false;
+        els.verifyAllBtn.disabled = false;
+        els.verifyAllBtn.textContent = "重新檢驗所有缺法";
+        if (allGood) {
+          els.exploreOutput.className = "explore-output good";
+          els.exploreOutput.textContent = `檢驗完成：共 ${checked.toLocaleString("zh-Hant")} 種代表配置，每一種都能只靠${allowFlip ? "旋轉或翻面" : "旋轉"}補成完整投影。`;
+        } else {
+          els.exploreOutput.className = "explore-output bad";
+          const text = document.createElement("span");
+          text.textContent = `找到反例：缺第 ${counterexample.map((x) => x + 1).join("、")} 齒時，${allowFlip ? "即使允許翻面仍" : ""}找不到完整投影。`;
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "counterexample-btn";
+          button.textContent = "套用這個反例";
+          button.addEventListener("click", () => {
+            stopPlayback();
+            state.bottomMissing = new Set(counterexample);
+            state.topMissing = new Set(counterexample);
+            state.sync = true;
+            state.flip = false;
+            state.shift = 0;
+            snapVisualShift();
+            els.syncMissing.checked = true;
+            els.flipTop.checked = false;
+            renderPickers();
+            syncInputs();
+            update();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+          els.exploreOutput.replaceChildren(text, document.createElement("br"), button);
+        }
+      }
+
+      function showToast(message) {
+        els.toast.textContent = message;
+        els.toast.classList.add("show");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => els.toast.classList.remove("show"), 2600);
+      }
+
+      els.teethRange.addEventListener("input", (event) => setTeethCount(event.target.value));
+      els.teethNumber.addEventListener("change", (event) => setTeethCount(event.target.value));
+      els.randomCount.addEventListener("change", () => {
+        const value = Math.max(0, Math.min(state.n - 1, Number(els.randomCount.value) || 0));
+        els.randomCount.value = value;
+        invalidateExplore("缺齒數已更改，可開始檢驗所有缺法。");
+        updateCombinationEstimate();
+      });
+      els.syncMissing.addEventListener("change", () => {
+        stopPlayback();
+        state.sync = els.syncMissing.checked;
+        if (state.sync) state.topMissing = new Set(state.bottomMissing);
+        snapVisualShift();
+        syncInputs();
+        renderPickers();
+        update();
+      });
+      els.flipTop.addEventListener("change", () => {
+        stopPlayback();
+        state.flip = els.flipTop.checked;
+        snapVisualShift();
+        update();
+      });
+      els.clockwiseBtn.addEventListener("click", () => {
+        state.direction = 1;
+        syncInputs();
+        update();
+      });
+      els.counterBtn.addEventListener("click", () => {
+        state.direction = -1;
+        syncInputs();
+        update();
+      });
+      els.bottomPicker.addEventListener("click", (event) => {
+        const button = event.target.closest(".tooth-btn");
+        if (button) toggleMissing("bottom", Number(button.dataset.index));
+      });
+      els.topPicker.addEventListener("click", (event) => {
+        const button = event.target.closest(".tooth-btn");
+        if (button) toggleMissing("top", Number(button.dataset.index));
+      });
+      els.randomizeBtn.addEventListener("click", randomizeMissing);
+      $$(".preset").forEach((button) => button.addEventListener("click", () => applyPreset(button.dataset.preset)));
+      els.forwardBtn.addEventListener("click", () => {
+        stopPlayback();
+        rotateOne(1);
+      });
+      els.backBtn.addEventListener("click", () => {
+        stopPlayback();
+        rotateOne(-1);
+      });
+      els.playBtn.addEventListener("click", () => state.playing ? stopPlayback() : startPlayback());
+      els.speedRange.addEventListener("input", restartPlaybackIfNeeded);
+      els.findBtn.addEventListener("click", jumpToNextSolution);
+      els.resetBtn.addEventListener("click", () => {
+        stopPlayback();
+        state.shift = 0;
+        state.flip = false;
+        snapVisualShift();
+        els.flipTop.checked = false;
+        update();
+      });
+      els.labelsBtn.addEventListener("click", () => {
+        state.showLabels = !state.showLabels;
+        els.labelsBtn.classList.toggle("active", state.showLabels);
+        els.labelsBtn.setAttribute("aria-pressed", String(state.showLabels));
+        draw();
+      });
+      els.allowFlipSearch.addEventListener("change", () => invalidateExplore("檢驗條件已更改，請重新開始。"));
+      els.verifyAllBtn.addEventListener("click", verifyAllPatterns);
+      window.addEventListener("resize", draw);
+      window.addEventListener("keydown", (event) => {
+        if (event.target.matches("input")) return;
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          stopPlayback();
+          rotateOne(1);
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          stopPlayback();
+          rotateOne(-1);
+        } else if (event.key === " ") {
+          event.preventDefault();
+          state.playing ? stopPlayback() : startPlayback();
+        }
+      });
+
+      syncInputs();
+      renderPickers();
+      update();
+    })();
+  </script>
+</body>
+</html>
